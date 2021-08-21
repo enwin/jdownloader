@@ -20,16 +20,16 @@ Features
 Usage
 --------
 
-To install `jdownloader-api` in your node.js project:
+To install `megatam-jdownloader` in your node.js project:
 
 ```
-npm install jdownloader-api
+npm install megatam-jdownloader
 ```
 
 And to access it from within node, simply add:
 
 ```javascript
-const jdownloaderAPI = require('jdownloader-api');
+const jdownloaderAPI = require('megatam-jdownloader');
 ```
 API
 --------

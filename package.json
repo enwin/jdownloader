@@ -1,6 +1,6 @@
 {
-  "name": "jdownloader",
-  "version": "1.0.0",
+  "name": "megatam-jdownloader",
+  "version": "1.0.1",
   "description": "A NodeJS wrapper for My.jdownloader.org API",
   "main": "index.js",
   "scripts": {
