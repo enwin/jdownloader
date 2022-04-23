@@ -95,7 +95,7 @@ const callServer = (query, key, params) => {
   query += `&signature=${signature}`;
   const url = __ENPOINT + query;
 
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     postQuery(url, params)
       .then((parsedBody) => {
         const result = decrypt(parsedBody, key);
@@ -107,7 +107,7 @@ const callServer = (query, key, params) => {
         }
         resolve(json);
       }).catch((err) => {
-        rejected(err);
+        reject(err);
       });
   });
 };
@@ -134,7 +134,7 @@ const callAction = (action, deviceId, params) => {
   }
   const jsonData = encrypt(JSON.stringify(json), __deviceEncryptionToken);
   const url = __ENPOINT + query;
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     postQuery(url, jsonData)
       .then((parsedBody) => {
         const result = decrypt(parsedBody, __deviceEncryptionToken);
@@ -146,7 +146,7 @@ const callAction = (action, deviceId, params) => {
         }
         resolve(json);
       }).catch((err) => {
-        rejected(decrypt(err.error, __deviceEncryptionToken));
+        reject(decrypt(err.error, __deviceEncryptionToken));
       });
   });
 };
@@ -165,7 +165,7 @@ exports.connect = (username, password) => {
 
   const query = `/my/connect?email=${encodeURI(username)}&appkey=${__APPKEY}`;
 
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     callServer(query, __loginSecret, null).then((val) => {
       __sessionToken = val.sessiontoken;
       __regainToken = val.regaintoken;
@@ -173,14 +173,14 @@ exports.connect = (username, password) => {
       __deviceEncryptionToken = updateEncryptionToken(__deviceSecret, __sessionToken);
       resolve(true);
     }).catch((error) => {
-      rejected(error);
+      reject(error);
     });
   });
 };
 
 exports.reconnect = function () {
   const query = `/my/reconnect?appkey=${encodeURI(__APPKEY)}&sessiontoken=${encodeURI(__sessionToken)}&regaintoken=${encodeURI(__regainToken)}`;
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     callServer(query, __serverEncryptionToken).then((val) => {
       __sessionToken = val.sessiontoken;
       __regainToken = val.regaintoken;
@@ -188,7 +188,7 @@ exports.reconnect = function () {
       __deviceEncryptionToken = updateEncryptionToken(__deviceSecret, __sessionToken);
       resolve(true);
     }).catch((error) => {
-      rejected(error);
+      reject(error);
     });
   });
 };
@@ -196,7 +196,7 @@ exports.reconnect = function () {
 
 exports.disconnect = function () {
   const query = `/my/disconnect?sessiontoken=${encodeURI(__sessionToken)}`;
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     callServer(query, __serverEncryptionToken).then(() => {
       __sessionToken = '';
       __regainToken = '';
@@ -204,39 +204,39 @@ exports.disconnect = function () {
       __deviceEncryptionToken = '';
       resolve(true);
     }).catch((error) => {
-      rejected(error);
+      reject(error);
     });
   });
 };
 
 exports.listDevices = () => {
   const query = `/my/listdevices?sessiontoken=${encodeURI(__sessionToken)}`;
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     callServer(query, __serverEncryptionToken).then((val) => {
       resolve(val.list);
     }).catch((error) => {
-      rejected(error);
+      reject(error);
     });
   });
 };
 
-exports.getDirectConnectionInfos = deviceId => new Promise((resolve, rejected) => {
+exports.getDirectConnectionInfos = deviceId => new Promise((resolve, reject) => {
   callAction('/device/getDirectConnectionInfos', deviceId, null)
     .then((val) => {
       resolve(val);
     }).catch((error) => {
-      rejected(error);
+      reject(error);
     });
 });
 
 exports.addLinks = (links, deviceId, path, autostart) => {
   const params = `{"priority":"DEFAULT","links":"${links}","destinationFolder": "${path}","autostart":${autostart}}`;
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     callAction('/linkgrabberv2/addLinks', deviceId, [params])
       .then((val) => {
         resolve(val);
       }).catch((error) => {
-        rejected(error);
+        reject(error);
       });
   });
 };
@@ -255,12 +255,12 @@ exports.queryLinks = (deviceId) => {
                    "extractionStatus": true,
                    "host": true,
                    "running" : true}`;
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     callAction('/downloadsV2/queryLinks', deviceId, [params])
       .then((val) => {
         resolve(val);
       }).catch((error) => {
-        rejected(error);
+        reject(error);
       });
   });
 };
@@ -280,24 +280,24 @@ exports.queryPackages = (deviceId, packagesIds) => {
   "host": true,
   "running" : true,
   "packageUUIDs" : [${packagesIds}]}`;
-  return new Promise((resolve, rejected) => {
+  return new Promise((resolve, reject) => {
     callAction('/downloadsV2/queryPackages', deviceId, [params])
       .then((val) => {
         resolve(val);
       }).catch((error) => {
-        rejected(error);
+        reject(error);
       });
   });
 };
 
 exports.cleanUpFinishedLinks = (deviceId) => {
     const params =  ["[]", "[]", "DELETE_FINISHED", "REMOVE_LINKS_ONLY", "ALL"];
-    return new Promise((resolve, rejected) => {
+    return new Promise((resolve, reject) => {
         callAction('/downloadsV2/cleanup', deviceId, params)
           .then((val) => {
             resolve(val);
           }).catch((error) => {
-            rejected(error);
+            reject(error);
           });
       });
 };
