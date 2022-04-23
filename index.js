@@ -229,8 +229,8 @@ exports.getDirectConnectionInfos = deviceId => new Promise((resolve, reject) => 
     });
 });
 
-exports.addLinks = (links, deviceId, path, autostart) => {
-  const params = `{"priority":"DEFAULT","links":"${links}","destinationFolder": "${path}","autostart":${autostart}}`;
+exports.addLinks = (links, deviceId, path, autostart, overwrite) => {
+  const params = `{"priority":"DEFAULT","links":"${links}","destinationFolder": "${path}","autostart":${autostart}, "overwritePackagizerRules": ${overwrite}}`;
   return new Promise((resolve, reject) => {
     callAction('/linkgrabberv2/addLinks', deviceId, [params])
       .then((val) => {
