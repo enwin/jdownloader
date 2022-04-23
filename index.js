@@ -99,7 +99,13 @@ const callServer = (query, key, params) => {
     postQuery(url, params)
       .then((parsedBody) => {
         const result = decrypt(parsedBody, key);
-        resolve(JSON.parse(unescapeJson(result)));
+        let json;
+        try{
+          json = JSON.parse(result);
+        } catch(e){
+          json = JSON.parse(unescapeJson(result))
+        }
+        resolve(json);
       }).catch((err) => {
         rejected(err);
       });
@@ -132,7 +138,13 @@ const callAction = (action, deviceId, params) => {
     postQuery(url, jsonData)
       .then((parsedBody) => {
         const result = decrypt(parsedBody, __deviceEncryptionToken);
-        resolve(JSON.parse(unescapeJson(result)));
+        let json;
+        try{
+          json = JSON.parse(result);
+        } catch(e){
+          json = JSON.parse(unescapeJson(result))
+        }
+        resolve(json);
       }).catch((err) => {
         rejected(decrypt(err.error, __deviceEncryptionToken));
       });
