@@ -15,7 +15,7 @@ interface Response {
   rid: number
 }
 
-export function addLinks(links: string, deviceId: string, path: string, autostart: boolean, overwrite: boolean): Promise<Response>;
+export function addLinks(links: string, deviceId: string, path: string, autostart: boolean): Promise<Response>;
 export function connect(username: string, password: string): Promise<boolean>;
 export function cleanUpFinishedLinks(deviceId: string): Promise<Response>;
 export function disconnect(): Promise<boolean>;
